@@ -246,6 +246,20 @@ class WebDriverUtility:
         )
 
     @safe_execute
+    def find_element_from_element(self, driver, locator, by=By.XPATH, timeout=5):
+        return self.retry_on_stale(
+            lambda: WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, locator))),
+            locator, by, timeout
+        )
+
+    @safe_execute
+    def find_elements_from_element(self, driver, locator, by=By.XPATH, timeout=5):
+        return self.retry_on_stale(
+            lambda: WebDriverWait(driver, timeout).until(EC.presence_of_all_elements_located((by, locator))),
+            locator, by, timeout
+        )
+
+    @safe_execute
     def find_elements(self, locator, by=By.XPATH, timeout=5):
         return self.retry_on_stale(
             lambda: WebDriverWait(self.driver, timeout).until(EC.presence_of_all_elements_located((by, locator))),
@@ -286,7 +300,7 @@ class WebDriverUtility:
         """Smoothly scrolls up the page."""
         for _ in range(max_scroll):
             self.driver.execute_script(f"window.scrollBy(0, -{scroll_amount});")
-            time.sleep(random.uniform(0.3, 0.7))  # Mimic human behavior
+            time.sleep(random.uniform(0.3, 0.7))
 
     @safe_execute
     def wait_for_element_visible(self, locator, by=By.XPATH, timeout=5):
