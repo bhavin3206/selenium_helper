@@ -18,16 +18,10 @@ git clone https://github.com/your-username/selenium_helper.git
 cd selenium_helper
 ```
 
-#### 2. Install Dependencies
-Ensure you have Python installed (3.7+ recommended). Install the required dependencies:
-```sh
-pip install -r requirements.txt
-```
-
-#### 3. Install the Package Locally
+#### 2. Install the Package Locally
 To install `selenium_helper` as a local package:
 ```sh
-pip install .
+pip install -e .
 ```
 
 ## Usage
