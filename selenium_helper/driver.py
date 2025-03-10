@@ -192,6 +192,7 @@
 import re
 import json
 import time
+import shutil
 import random
 import platform
 import subprocess
@@ -349,20 +350,19 @@ class WebDriverUtility:
     
     @safe_execute
     def get_chrome_version(self) -> int:
-        system_platform = platform.system()
+        commands = {
+            "Windows": r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
+            "Darwin": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version",
+            "Linux": "google-chrome --version" if shutil.which("google-chrome") else None
+        }
 
-        if system_platform == "Windows":
-            process = subprocess.run(
-                r'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
-                capture_output=True, text=True, shell=True
-            )
-            version = re.search(r"version\s+REG_SZ\s+(\d+)\.", process.stdout)
-        elif system_platform == "Darwin":
-            process = subprocess.run([
-                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--version"
-            ], capture_output=True, text=True)
-            version = re.search(r"Google Chrome (\d+)\.", process.stdout)
-        elif system_platform == "Linux":
-            process = subprocess.run(["google-chrome", "--version"], capture_output=True, text=True)
-            version = re.search(r"Google Chrome (\d+)\.", process.stdout)
-        return int(version.group(1)) if version else None
+        system_platform = platform.system()
+        command = commands.get(system_platform)
+
+        if not command:
+            logging.error(f"Chrome detection not supported on {system_platform}")
+            return None
+
+        process = subprocess.run(command, capture_output=True, text=True, shell=True)
+        version_match = re.search(r"(\d+)\.", process.stdout)
+        return int(version_match.group(1)) if version_match else None
