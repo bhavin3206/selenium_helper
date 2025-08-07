@@ -163,19 +163,19 @@ class WebDriverUtility:
         dev_mode_toggle = self.driver.execute_script(js_path_to_element)
 
         if not dev_mode_toggle:
-            print("Could not find the Developer Mode toggle element.")
+            logging.info("Could not find the Developer Mode toggle element.")
             return
 
         aria_pressed_state = dev_mode_toggle.get_attribute("aria-pressed")
 
         if only_if_off and aria_pressed_state == "true":
-            print("Developer Mode is already ON. No action needed.")
+            logging.info("Developer Mode is already ON. No action needed.")
             return
 
         action = "enable" if aria_pressed_state != "true" else "disable"
-        print(f"Developer Mode is {'OFF' if action == 'enable' else 'ON'}. Clicking to {action} it...")
+        logging.info(f"Developer Mode is {'OFF' if action == 'enable' else 'ON'}. Clicking to {action} it...")
         dev_mode_toggle.click()
-        print("Toggle clicked successfully.")
+        logging.info("Toggle clicked successfully.")
 
     @safe_execute
     def switch_to_tab(self, window_name: Union[str, int]):
