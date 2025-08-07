@@ -197,7 +197,7 @@ import random
 import platform
 import subprocess
 import logging
-from typing import Union
+from typing import Union, Optional
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -336,6 +336,36 @@ class WebDriverUtility:
 
     def get_all_window_tabs(self) -> list:
         return self.driver.window_handles
+
+
+    def click_dev_mode_toggle(self, only_if_off: bool = True):
+        self.driver.get("chrome://extensions/")
+        """
+        Toggles the Developer Mode in Chrome extensions settings.
+        :param driver: Selenium WebDriver instance.
+        :param only_if_off: If True, only enables Developer Mode if it's off.
+        """
+        js_path_to_element = """
+        return document.querySelector('body > extensions-manager')
+            .shadowRoot.querySelector('#toolbar')
+            .shadowRoot.querySelector('#devMode');
+        """
+        dev_mode_toggle = self.driver.execute_script(js_path_to_element)
+
+        if not dev_mode_toggle:
+            print("Could not find the Developer Mode toggle element.")
+            return
+
+        aria_pressed_state = dev_mode_toggle.get_attribute("aria-pressed")
+
+        if only_if_off and aria_pressed_state == "true":
+            print("Developer Mode is already ON. No action needed.")
+            return
+
+        action = "enable" if aria_pressed_state != "true" else "disable"
+        print(f"Developer Mode is {'OFF' if action == 'enable' else 'ON'}. Clicking to {action} it...")
+        dev_mode_toggle.click()
+        print("Toggle clicked successfully.")
 
     @safe_execute
     def switch_to_tab(self, window_name: Union[str, int]):
