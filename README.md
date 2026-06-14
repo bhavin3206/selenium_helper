@@ -14,7 +14,7 @@ pip install git+https://github.com/bhavin3206/selenium_helper.git
 
 #### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-username/selenium_helper.git
+git clone https://github.com/bhavin3206/selenium_helper.git
 cd selenium_helper
 ```
 
